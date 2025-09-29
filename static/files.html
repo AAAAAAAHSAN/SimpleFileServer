@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File List</title>
+</head>
+<body>
+     <nav>
+    <a href="index.html">Home</a> |
+    <a href="upload.html">Upload</a>
+  </nav>
+  <h1>Uploaded Files</h1>
+  <ul id="fileList"></ul>
+
+
+  <script>
+  async function loadFiles() {
+    const res = await fetch("/list");
+    if (!res.ok) {
+      document.getElementById("fileList").innerText = "Error loading files.";
+      return;
+    }
+    const files = await res.json();
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
+
+    files.forEach(f => {
+      const li = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = "/download?file=" + encodeURIComponent(f.name);
+      link.textContent = f.name;
+      li.appendChild(link);
+
+      // add size info next to link
+      const size = document.createElement("span");
+      size.textContent = ` (${(f.size/1024).toFixed(2)} KB)`;
+      li.appendChild(size);
+
+      list.appendChild(li);
+    });
+  }
+  loadFiles();
+</script>
+
+</body>
+</html>
